@@ -1,0 +1,6 @@
+build
+image.bmp
+.DS_Store
+navecita.obj
+cube.obj
+cmake-build-debug
