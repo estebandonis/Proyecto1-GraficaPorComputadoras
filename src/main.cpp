@@ -157,14 +157,6 @@ void render(std::vector<glm::vec3> VBO, const Uniform& uniforms, const int shade
 float x = 0.0f;
 float y = 0.0f;
 float z = -2.0f;
-float zNave = 4.0f;
-
-glm::mat4 createModelMatrixNave() {
-    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(x, y, zNave));
-    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.04f, 0.04f, 0.04f));
-
-    return translation * scale;
-}
 
 float a = 3.14f / 3.0f;
 float b = 3.14f / 3.0f;
@@ -245,6 +237,25 @@ float zCamera = 0.0f;
 float cameraRotationX = 0.0f;
 float cameraRotationY = 0.0f;
 float cameraRotationZ = 0.0f;
+
+float xNave = 0.0f;
+float yNave = 0.0f;
+float zNave = 5.0f;
+
+glm::mat4 createModelMatrixNave() {
+
+    // Calculate the camera direction based on rotation angles
+    glm::vec3 cameraDirection = glm::vec3(
+            glm::cos(cameraRotationY) * glm::sin(cameraRotationX),
+            glm::sin(cameraRotationY),
+            glm::cos(cameraRotationY) * glm::cos(cameraRotationX)
+    );
+
+    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(xNave + cameraDirection.x, yNave + cameraDirection.y, zNave + cameraDirection.z));
+    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.03f, 0.03f, 0.03f));
+
+    return translation * scale;
+}
 
 glm::mat4 createViewMatrix() {
 
@@ -444,24 +455,28 @@ int main() {
                 switch (event.key.keysym.sym) {
                     case SDLK_a:
                         x -= 1.0f;
+                        xNave -= 1.0f;
                         xCamera -= 1.0f;
                         xLight -= 1.0f;
                         moveX -= 1.0f;
                         break;
                     case SDLK_d:
                         x += 1.0f;
+                        xNave += 1.0f;
                         xCamera += 1.0f;
                         xLight += 1.0f;
                         moveX += 1.0f;
                         break;
                     case SDLK_w:
                         y += 1.0f;
+                        yNave += 1.0f;
                         yCamera += 1.0f;
                         yLight += 1.0f;
                         moveY -= 1.0f;
                         break;
                     case SDLK_s:
                         y -= 1.0f;
+                        yNave -= 1.0f;
                         yCamera -= 1.0f;
                         yLight -= 1.0f;
                         moveY += 1.0f;
@@ -507,47 +522,47 @@ int main() {
         clear();
         paintSpace(moveX, moveY, scale);
 
-//        uniforms.model = createModelMatrixNave();
-//        uniforms.view = createViewMatrix();
-//        uniforms.projection = createProjectionMatrix();
-//        uniforms.viewport = createViewportMatrix();
-//        // Call our render function
-//        render(vertexBufferObjectNave, uniforms, 0);
+        uniforms.model = createModelMatrixNave();
+        uniforms.view = createViewMatrix();
+        uniforms.projection = createProjectionMatrix();
+        uniforms.viewport = createViewportMatrix();
+        // Call our render function
+        render(vertexBufferObjectNave, uniforms, 0);
 
-        uniformsPlanet.model = createModelMatrixPlanet(3.0f);
-        uniformsPlanet.view = createViewMatrix();
-        uniformsPlanet.projection = createProjectionMatrix();
-        uniformsPlanet.viewport = createViewportMatrix();
-
-        render(vertexBufferObjectPlaneta, uniformsPlanet, 1);
-
-        uniformsTierra.model = createModelMatrixTierra(2.0f);
-        uniformsTierra.view = createViewMatrix();
-        uniformsTierra.projection = createProjectionMatrix();
-        uniformsTierra.viewport = createViewportMatrix();
-
-        render(vertexBufferObjectPlaneta, uniformsTierra, 2);
-
-        uniformsPlanetaX.model = createModelMatrixPlanetaX(1.0f);
-        uniformsPlanetaX.view = createViewMatrix();
-        uniformsPlanetaX.projection = createProjectionMatrix();
-        uniformsPlanetaX.viewport = createViewportMatrix();
-
-        render(vertexBufferObjectPlaneta, uniformsPlanetaX, 3);
-
-        uniformsJupiter.model = createModelMatrixJupiter(0.5f);
-        uniformsJupiter.view = createViewMatrix();
-        uniformsJupiter.projection = createProjectionMatrix();
-        uniformsJupiter.viewport = createViewportMatrix();
-
-        render(vertexBufferObjectPlaneta, uniformsJupiter, 4);
-
-        uniformsEstrella.model = createModelMatrixEstrella();
-        uniformsEstrella.view = createViewMatrix();
-        uniformsEstrella.projection = createProjectionMatrix();
-        uniformsEstrella.viewport = createViewportMatrix();
-
-        render(vertexBufferObjectPlaneta, uniformsEstrella, 5);
+//        uniformsPlanet.model = createModelMatrixPlanet(3.0f);
+//        uniformsPlanet.view = createViewMatrix();
+//        uniformsPlanet.projection = createProjectionMatrix();
+//        uniformsPlanet.viewport = createViewportMatrix();
+//
+//        render(vertexBufferObjectPlaneta, uniformsPlanet, 1);
+//
+//        uniformsTierra.model = createModelMatrixTierra(2.0f);
+//        uniformsTierra.view = createViewMatrix();
+//        uniformsTierra.projection = createProjectionMatrix();
+//        uniformsTierra.viewport = createViewportMatrix();
+//
+//        render(vertexBufferObjectPlaneta, uniformsTierra, 2);
+//
+//        uniformsPlanetaX.model = createModelMatrixPlanetaX(1.0f);
+//        uniformsPlanetaX.view = createViewMatrix();
+//        uniformsPlanetaX.projection = createProjectionMatrix();
+//        uniformsPlanetaX.viewport = createViewportMatrix();
+//
+//        render(vertexBufferObjectPlaneta, uniformsPlanetaX, 3);
+//
+//        uniformsJupiter.model = createModelMatrixJupiter(0.5f);
+//        uniformsJupiter.view = createViewMatrix();
+//        uniformsJupiter.projection = createProjectionMatrix();
+//        uniformsJupiter.viewport = createViewportMatrix();
+//
+//        render(vertexBufferObjectPlaneta, uniformsJupiter, 4);
+//
+//        uniformsEstrella.model = createModelMatrixEstrella();
+//        uniformsEstrella.view = createViewMatrix();
+//        uniformsEstrella.projection = createProjectionMatrix();
+//        uniformsEstrella.viewport = createViewportMatrix();
+//
+//        render(vertexBufferObjectPlaneta, uniformsEstrella, 5);
 
 
         // Present the frame buffer to the screen
