@@ -43,14 +43,13 @@ void clear() {
     }
 }
 
-void paintSpace(int ox, int oy) {
+void paintSpace(float ox, float oy, float scale) {
     for (int y = 0; y < WINDOW_HEIGHT; y++) {
         for (int x = 0; x < WINDOW_WIDTH; x++) {
             FastNoiseLite noiseGenerator;
             noiseGenerator.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 
-            float scale = 1000.0f;
-            float noiseValue = noiseGenerator.GetNoise((x + (ox * 100.0f)) * scale, (y + oy * 100.0f) * scale);
+            float noiseValue = noiseGenerator.GetNoise(((x + ox) * scale), ((y + oy) * scale));
 
             // If the noise value is above a threshold, draw a star
             if (noiseValue > 0.97f) {
@@ -88,6 +87,11 @@ std::vector<std::vector<Vertex>> primitiveAssembly(const std::vector<Vertex>& tr
     return groupedVertices;
 }
 
+float xLight = 0.0f;
+float yLight = 0.0f;
+float zLight = -1.0f;
+
+glm::vec3 L = glm::vec3(xLight, yLight, zLight);
 
 void render(std::vector<glm::vec3> VBO, const Uniform& uniforms, const int shader) {
     // 1. Vertex Shader
@@ -118,7 +122,8 @@ void render(std::vector<glm::vec3> VBO, const Uniform& uniforms, const int shade
             triangleVertices[1],
             triangleVertices[2],
             WINDOW_WIDTH,
-            WINDOW_HEIGHT
+            WINDOW_HEIGHT,
+            L
         );
         
         fragments.insert(
@@ -133,41 +138,128 @@ void render(std::vector<glm::vec3> VBO, const Uniform& uniforms, const int shade
 
     for (Fragment fragment : fragments) {
         if (shader == 0){
-            point(fragmentShader(fragment));
-        } else {
-            point(fragmentShader1(fragment));
+            point(fragmentShaderNave(fragment));
+        } else if (shader == 1) {
+            point(fragmentShaderPlanet(fragment));
+        } else if (shader == 2) {
+            point(fragmentShaderTierra(fragment));
+        } else if (shader == 3) {
+            point(fragmentShaderPlanetaX(fragment));
+        } else if (shader == 4) {
+            point(fragmentShaderJupiter(fragment));
+        } else if (shader == 5) {
+            point(fragmentShaderEstrella(fragment));
         }
     }
 }
 
 
-float a = 3.14f / 3.0f;
 float x = 0.0f;
 float y = 0.0f;
-float z = -5.0f;
+float z = -2.0f;
+float zNave = 4.0f;
 
-glm::mat4 createModelMatrix() {
-    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(x, y, 2.0f));
-    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.08f, 0.08f, 0.08f));
+glm::mat4 createModelMatrixNave() {
+    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(x, y, zNave));
+    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.04f, 0.04f, 0.04f));
 
     return translation * scale;
 }
 
-glm::mat4 createModelMatrix1() {
-    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.7f, 0.7f, 0.7f));
+float a = 3.14f / 3.0f;
+float b = 3.14f / 3.0f;
+
+float orbitRadiusPlanet = 1.0f;
+
+glm::mat4 createModelMatrixPlanet(float deltaTime) {
+    float orbitalAngle = glm::radians(a) * deltaTime;
+    float xOrbit = orbitRadiusPlanet * glm::cos(orbitalAngle);
+    float zOrbit = orbitRadiusPlanet * glm::sin(orbitalAngle);
+
+    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(xOrbit, 0.0f, zOrbit));
+    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.1f, 0.1f, 0.1f));
+    b += 20;
+    glm::mat4 rotation = glm::rotate(glm::mat4(1), glm::radians(b), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    return translation * scale * rotation;
+}
+
+float orbitRadiusTierra = 1.5f;
+
+glm::mat4 createModelMatrixTierra(float deltaTime) {
+    float orbitalAngle = glm::radians(a) * deltaTime;
+    float xOrbit = orbitRadiusTierra * glm::cos(orbitalAngle);
+    float zOrbit = orbitRadiusTierra * glm::sin(orbitalAngle);
+
+    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(xOrbit, 0.0f, zOrbit));
+    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.2f, 0.2f, 0.2f));
+    b += 20;
+    glm::mat4 rotation = glm::rotate(glm::mat4(1), glm::radians(b), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    return translation * scale * rotation;
+}
+
+float orbitRadiusPlanetaX = 2.3f;
+
+glm::mat4 createModelMatrixPlanetaX(float deltaTime) {
+    float orbitalAngle = glm::radians(a) * deltaTime;
+    float xOrbit = orbitRadiusPlanetaX * glm::cos(orbitalAngle);
+    float zOrbit = orbitRadiusPlanetaX * glm::sin(orbitalAngle);
+
+    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(xOrbit, 0.0f, zOrbit));
+    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.3f, 0.3f, 0.3f));
+    b += 20;
+    glm::mat4 rotation = glm::rotate(glm::mat4(1), glm::radians(b), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    return translation * scale * rotation;
+}
+
+float orbitRadiusJupiter = 3.5f;
+
+glm::mat4 createModelMatrixJupiter(float deltaTime) {
+    float orbitalAngle = glm::radians(a) * deltaTime;
+    float xOrbit = orbitRadiusJupiter * glm::cos(orbitalAngle);
+    float zOrbit = orbitRadiusJupiter * glm::sin(orbitalAngle);
+
+    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(xOrbit, 0.0f, zOrbit));
+    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.5f, 0.5f, 0.5f));
+    b += 20;
+    glm::mat4 rotation = glm::rotate(glm::mat4(1), glm::radians(b), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    return translation * scale * rotation;
+}
+
+glm::mat4 createModelMatrixEstrella() {
+    glm::mat4 translation = glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, 0.0f));
+    glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.8f, 0.8f, 0.8f));
     a += 3;
     glm::mat4 rotation = glm::rotate(glm::mat4(1), glm::radians(a), glm::vec3(0.0f, 1.0f, 0.0f));
 
     return translation * scale * rotation;
 }
 
+float xCamera = 0.0f;
+float yCamera = 0.0f;
+float zCamera = 0.0f;
+
+float cameraRotationX = 0.0f;
+float cameraRotationY = 0.0f;
+float cameraRotationZ = 0.0f;
+
 glm::mat4 createViewMatrix() {
+
+    // Calculate the camera direction based on rotation angles
+    glm::vec3 cameraDirection = glm::vec3(
+            glm::cos(cameraRotationY) * glm::sin(cameraRotationX),
+            glm::sin(cameraRotationY),
+            glm::cos(cameraRotationY) * glm::cos(cameraRotationX)
+    );
+
     return glm::lookAt(
         // donde esta
-        glm::vec3(x, y, -5.0f),
+        glm::vec3(x, y, z),
         // hacia adonde mira
-        glm::vec3(x, y, 0),
+        glm::vec3(x + cameraDirection.x, y + cameraDirection.y, z + cameraDirection.z), // Look-at position
         // arriba
         glm::vec3(0, -20, 0)
     );
@@ -325,11 +417,19 @@ int main() {
     }
 
     Uniform uniforms;
-    Uniform uniformsPlaneta;
+    Uniform uniformsPlanet;
+    Uniform uniformsTierra;
+    Uniform uniformsPlanetaX;
+    Uniform uniformsJupiter;
+    Uniform uniformsEstrella;
 
     Uint32 frameStart, frameTime;
     std::string title = "FPS: ";
     int speed = 10;
+
+    float moveX = 200.0f;
+    float moveY = 100.0f;
+    float scale = 1000.0f;
 
     while (running) {
         frameStart = SDL_GetTicks();
@@ -342,44 +442,113 @@ int main() {
             // sdl event in which we can move the object
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_LEFT:
+                    case SDLK_a:
                         x -= 1.0f;
+                        xCamera -= 1.0f;
+                        xLight -= 1.0f;
+                        moveX -= 1.0f;
                         break;
-                    case SDLK_RIGHT:
+                    case SDLK_d:
                         x += 1.0f;
-                        break;
-                    case SDLK_UP:
-                        y += 1.0f;
-                        break;
-                    case SDLK_DOWN:
-                        y -= 1.0f;
+                        xCamera += 1.0f;
+                        xLight += 1.0f;
+                        moveX += 1.0f;
                         break;
                     case SDLK_w:
-                        z += 1.0f;
+                        y += 1.0f;
+                        yCamera += 1.0f;
+                        yLight += 1.0f;
+                        moveY -= 1.0f;
                         break;
                     case SDLK_s:
+                        y -= 1.0f;
+                        yCamera -= 1.0f;
+                        yLight -= 1.0f;
+                        moveY += 1.0f;
+                        break;
+                    case SDLK_r:
+                        z += 1.0f;
+                        zCamera += 1.0f;
+                        zNave += 1.0f;
+                        zLight += 1.0f;
+                        scale += 100.0f;
+                        break;
+                    case SDLK_f:
                         z -= 1.0f;
+                        zCamera -= 1.0f;
+                        zNave -= 1.0f;
+                        zLight -= 1.0f;
+                        scale -= 100.0f;
+                        break;
+                    case SDLK_LEFT:
+                        cameraRotationX -= glm::radians(1.0f); // Rotate the camera left
+                        moveX -= 1.0f;
+                        xLight -= 1.0f;
+                        break;
+                    case SDLK_RIGHT:
+                        cameraRotationX += glm::radians(1.0f); // Rotate the camera right
+                        moveX += 1.0f;
+                        xLight += 1.0f;
+                        break;
+                    case SDLK_DOWN:
+                        cameraRotationY -= glm::radians(1.0f); // Rotate the camera down
+                        moveY += 1.0f;
+                        yLight -= 1.0f;
+                        break;
+                    case SDLK_UP:
+                        cameraRotationY += glm::radians(1.0f); // Rotate the camera up
+                        moveY -= 1.0f;
+                        yLight += 1.0f;
                         break;
                 }
             }
         }
 
         clear();
-        paintSpace(200, 100);
+        paintSpace(moveX, moveY, scale);
 
-        uniforms.model = createModelMatrix();
-        uniforms.view = createViewMatrix();
-        uniforms.projection = createProjectionMatrix();
-        uniforms.viewport = createViewportMatrix();
-        // Call our render function
-        render(vertexBufferObjectNave, uniforms, 0);
+//        uniforms.model = createModelMatrixNave();
+//        uniforms.view = createViewMatrix();
+//        uniforms.projection = createProjectionMatrix();
+//        uniforms.viewport = createViewportMatrix();
+//        // Call our render function
+//        render(vertexBufferObjectNave, uniforms, 0);
 
-        uniformsPlaneta.model = createModelMatrix1();
-        uniformsPlaneta.view = createViewMatrix();
-        uniformsPlaneta.projection = createProjectionMatrix();
-        uniformsPlaneta.viewport = createViewportMatrix();
+        uniformsPlanet.model = createModelMatrixPlanet(3.0f);
+        uniformsPlanet.view = createViewMatrix();
+        uniformsPlanet.projection = createProjectionMatrix();
+        uniformsPlanet.viewport = createViewportMatrix();
 
-        render(vertexBufferObjectPlaneta, uniformsPlaneta, 1);
+        render(vertexBufferObjectPlaneta, uniformsPlanet, 1);
+
+        uniformsTierra.model = createModelMatrixTierra(2.0f);
+        uniformsTierra.view = createViewMatrix();
+        uniformsTierra.projection = createProjectionMatrix();
+        uniformsTierra.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsTierra, 2);
+
+        uniformsPlanetaX.model = createModelMatrixPlanetaX(1.0f);
+        uniformsPlanetaX.view = createViewMatrix();
+        uniformsPlanetaX.projection = createProjectionMatrix();
+        uniformsPlanetaX.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsPlanetaX, 3);
+
+        uniformsJupiter.model = createModelMatrixJupiter(0.5f);
+        uniformsJupiter.view = createViewMatrix();
+        uniformsJupiter.projection = createProjectionMatrix();
+        uniformsJupiter.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsJupiter, 4);
+
+        uniformsEstrella.model = createModelMatrixEstrella();
+        uniformsEstrella.view = createViewMatrix();
+        uniformsEstrella.projection = createProjectionMatrix();
+        uniformsEstrella.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsEstrella, 5);
+
 
         // Present the frame buffer to the screen
         SDL_RenderPresent(renderer);

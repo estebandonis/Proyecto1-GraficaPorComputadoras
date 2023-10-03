@@ -3,8 +3,6 @@
 #include <glm.hpp>
 #include "fragment.h"
 
-glm::vec3 L = glm::vec3(0.8f, 0.8f, -0.8f);
-
 std::pair<float, float> barycentricCoordinates(const glm::ivec2& P, const glm::vec3& A, const glm::vec3& B, const glm::vec3& C) {
   glm::vec3 bary = glm::cross(
     glm::vec3(C.x - A.x, B.x - A.x, A.x - P.x),
@@ -21,7 +19,7 @@ std::pair<float, float> barycentricCoordinates(const glm::ivec2& P, const glm::v
     );
 }
 
-std::vector<Fragment> triangle(const Vertex& a, const Vertex& b, const Vertex& c, size_t width, size_t height) {
+std::vector<Fragment> triangle(const Vertex& a, const Vertex& b, const Vertex& c, size_t width, size_t height, glm::vec3 L) {
     std::vector<Fragment> fragments;
     glm::vec3 A = a.position;
     glm::vec3 B = b.position;
@@ -56,8 +54,8 @@ std::vector<Fragment> triangle(const Vertex& a, const Vertex& b, const Vertex& c
 
         float intensity = glm::dot(normal, L);
 
-        if (intensity < 0)
-            continue;
+//        if (intensity < 0)
+//            continue;
 
         glm::vec3 original = a.original * w + b.original * v + c.original * u;
 
