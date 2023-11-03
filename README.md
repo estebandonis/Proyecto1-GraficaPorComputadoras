@@ -15,4 +15,5 @@ Y luego ejecutar el siguiente comando en la terminal:
 Al ejecutarlo se verá algo así:
 
 
+![Screen Recording 2023-11-02 at 6 36 50 PM](https://github.com/estebandonis/Proyecto1-GraficaPorComputadoras/assets/77749546/c88b8330-6332-4dd4-8e2a-a071a2dab59b)
 
