@@ -239,8 +239,8 @@ float cameraRotationY = 0.0f;
 float cameraRotationZ = 0.0f;
 
 float xNave = 0.0f;
-float yNave = 0.0f;
-float zNave = 5.0f;
+float yNave = -0.5f;
+float zNave = 1.0f;
 
 glm::mat4 createModelMatrixNave() {
 
@@ -529,40 +529,40 @@ int main() {
         // Call our render function
         render(vertexBufferObjectNave, uniforms, 0);
 
-//        uniformsPlanet.model = createModelMatrixPlanet(3.0f);
-//        uniformsPlanet.view = createViewMatrix();
-//        uniformsPlanet.projection = createProjectionMatrix();
-//        uniformsPlanet.viewport = createViewportMatrix();
-//
-//        render(vertexBufferObjectPlaneta, uniformsPlanet, 1);
-//
-//        uniformsTierra.model = createModelMatrixTierra(2.0f);
-//        uniformsTierra.view = createViewMatrix();
-//        uniformsTierra.projection = createProjectionMatrix();
-//        uniformsTierra.viewport = createViewportMatrix();
-//
-//        render(vertexBufferObjectPlaneta, uniformsTierra, 2);
-//
-//        uniformsPlanetaX.model = createModelMatrixPlanetaX(1.0f);
-//        uniformsPlanetaX.view = createViewMatrix();
-//        uniformsPlanetaX.projection = createProjectionMatrix();
-//        uniformsPlanetaX.viewport = createViewportMatrix();
-//
-//        render(vertexBufferObjectPlaneta, uniformsPlanetaX, 3);
-//
-//        uniformsJupiter.model = createModelMatrixJupiter(0.5f);
-//        uniformsJupiter.view = createViewMatrix();
-//        uniformsJupiter.projection = createProjectionMatrix();
-//        uniformsJupiter.viewport = createViewportMatrix();
-//
-//        render(vertexBufferObjectPlaneta, uniformsJupiter, 4);
-//
-//        uniformsEstrella.model = createModelMatrixEstrella();
-//        uniformsEstrella.view = createViewMatrix();
-//        uniformsEstrella.projection = createProjectionMatrix();
-//        uniformsEstrella.viewport = createViewportMatrix();
-//
-//        render(vertexBufferObjectPlaneta, uniformsEstrella, 5);
+        uniformsPlanet.model = createModelMatrixPlanet(3.0f);
+        uniformsPlanet.view = createViewMatrix();
+        uniformsPlanet.projection = createProjectionMatrix();
+        uniformsPlanet.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsPlanet, 1);
+
+        uniformsTierra.model = createModelMatrixTierra(2.0f);
+        uniformsTierra.view = createViewMatrix();
+        uniformsTierra.projection = createProjectionMatrix();
+        uniformsTierra.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsTierra, 2);
+
+        uniformsPlanetaX.model = createModelMatrixPlanetaX(1.0f);
+        uniformsPlanetaX.view = createViewMatrix();
+        uniformsPlanetaX.projection = createProjectionMatrix();
+        uniformsPlanetaX.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsPlanetaX, 3);
+
+        uniformsJupiter.model = createModelMatrixJupiter(0.5f);
+        uniformsJupiter.view = createViewMatrix();
+        uniformsJupiter.projection = createProjectionMatrix();
+        uniformsJupiter.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsJupiter, 4);
+
+        uniformsEstrella.model = createModelMatrixEstrella();
+        uniformsEstrella.view = createViewMatrix();
+        uniformsEstrella.projection = createProjectionMatrix();
+        uniformsEstrella.viewport = createViewportMatrix();
+
+        render(vertexBufferObjectPlaneta, uniformsEstrella, 5);
 
 
         // Present the frame buffer to the screen
